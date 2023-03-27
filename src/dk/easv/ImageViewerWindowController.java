@@ -76,8 +76,8 @@ public class ImageViewerWindowController {
         } else if (!ImageShow) {
             ImageShow = true;
         }
-
         Thread thread = new Thread(() -> {
+
             while (ImageShow) {
                 try {
                     // Display the current image for 2 seconds
@@ -87,13 +87,13 @@ public class ImageViewerWindowController {
                     currentImageIndex = (currentImageIndex + 1) % images.size();
                     imageView.setImage(images.get(currentImageIndex));
 
-                    // Show the filepath of the currently shown image
                     String filepath = imageView.getImage().getUrl();
 
                     // Schedule the UI update on the UI thread
                     Platform.runLater(() -> {
                         lblShowName.setText(filepath);
                     });
+
                 } catch (InterruptedException e) {
                     // Handle the exception appropriately
                     e.printStackTrace();
