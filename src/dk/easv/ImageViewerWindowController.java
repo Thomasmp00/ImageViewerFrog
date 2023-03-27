@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -14,6 +15,7 @@ import javafx.stage.Stage;
 
 public class ImageViewerWindowController {
     private final List<Image> images = new ArrayList<>();
+    public Label lblShowName;
     private int currentImageIndex = 0;
 
     private boolean ImageShow = false;
