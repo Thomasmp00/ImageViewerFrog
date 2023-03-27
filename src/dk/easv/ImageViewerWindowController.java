@@ -76,6 +76,9 @@ public class ImageViewerWindowController {
                 try {
                     // Display the current image for 2 seconds
                     Thread.sleep(2000);
+                    if(!ImageShow){
+                        return;
+                    }
 
                     // Switch to the next image
                     currentImageIndex = (currentImageIndex + 1) % images.size();
