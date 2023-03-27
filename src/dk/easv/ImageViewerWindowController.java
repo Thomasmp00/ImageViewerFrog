@@ -3,6 +3,8 @@ package dk.easv;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -40,8 +42,15 @@ public class ImageViewerWindowController {
                 images.add(new Image(f.toURI().toString()));
             });
             displayImage();
+
+            // Get the names of the selected files and display them in lblShowName
+            String fileNames = files.stream()
+                    .map(File::getName)
+                    .collect(Collectors.joining(", "));
+            lblShowName.setText(fileNames);
         }
     }
+
 
     @FXML
     private void handleBtnPreviousAction() {
