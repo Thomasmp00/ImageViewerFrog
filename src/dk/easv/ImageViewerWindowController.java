@@ -76,7 +76,7 @@ public class ImageViewerWindowController {
                 try {
                     // Display the current image for 2 seconds
                     Thread.sleep(2000);
-                    if(!ImageShow){
+                    if (!ImageShow) {
                         return;
                     }
 
