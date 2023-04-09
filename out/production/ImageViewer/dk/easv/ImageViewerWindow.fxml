@@ -28,6 +28,7 @@
                     </buttons>
                 </ButtonBar>
             <Button mnemonicParsing="false" onAction="#handleStartSlideShow" text="Start Slide show" />
+            <Button mnemonicParsing="false" onAction="#handleDeleteCurrentSlideShow" text="Delete Current Slideshow" />
             <Label fx:id="lblShowName" text="File Name" />
             </children>
             <opaqueInsets>

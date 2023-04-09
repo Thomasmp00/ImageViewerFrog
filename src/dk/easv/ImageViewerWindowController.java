@@ -25,7 +25,9 @@ public class ImageViewerWindowController {
 
     List<Slideshow> listOfSlideShows = new ArrayList<>();
 
-    int slideShowCounter;
+    int slideShowCounter = 0;
+
+    boolean deleteCurrentSlideShow = false;
 
     @FXML
     Parent root;
@@ -52,6 +54,12 @@ public class ImageViewerWindowController {
             Slideshow slideshow = new Slideshow(imagesToSlideShow);
             listOfSlideShows.add(slideshow);
             // TODO displayImage();
+        }
+    }
+
+    public void handleDeleteCurrentSlideShow(ActionEvent actionEvent) {
+        if(slideShowCounter < 0){
+            deleteCurrentSlideShow = true;
         }
     }
 
@@ -91,9 +99,17 @@ public class ImageViewerWindowController {
                         lblShowName.setText(filepath);
                     });
 
-                    Thread.sleep(2000);
 
+                    Thread.sleep(2000);
                     imageCounter--;
+
+                    if(deleteCurrentSlideShow) {
+                        deleteCurrentSlideShow = false;
+                        listOfSlideShows.remove(slideShowCounter);
+                        handleStartSlideShow(actionEvent);
+                        return;
+                    }
+
                 } catch (InterruptedException e) {
                     // Handle the exception appropriately
                     e.printStackTrace();
@@ -104,6 +120,37 @@ public class ImageViewerWindowController {
         }
     }
 
+
+    public void slideShowSwitcher(){
+        if(slideShowCounter == -1 ) // Makes sure the slideShow list resets by acting as a counter that resets the list
+            slideShowCounter = listOfSlideShows.size() - 1;
+
+        // Gets and sets the correct slideShow object
+        Slideshow slideshow = listOfSlideShows.get(slideShowCounter);
+        List<Image> imagesFromSlideShow = slideshow.getImages();
+
+
+        int imageCounter = imagesFromSlideShow.size() - 1; // A counter to switch to the next slideShowImage
+
+        long slideShowTimer = System.currentTimeMillis() + 10000; // A slideShow timer for 20 seconds in milliseconds
+        while(System.currentTimeMillis() < slideShowTimer)
+            try {
+                //Set the imageCounter
+                if(imageCounter == -1)
+                    imageCounter = imagesFromSlideShow.size() - 1;
+
+                Image imageToDisplay = imagesFromSlideShow.get(imageCounter);
+
+                imageView.setImage(imageToDisplay);
+
+                String filepath = imageView.getImage().getUrl();
+
+                // Schedule the UI Update on the UI thread
+
+                Platform.runLater(() -> {
+                    lblShowName.setText(filepath);
+                });
+    }
 
     public void handleSlideStartSlideShow(ActionEvent actionEvent) {
         if (ImageShow) {
@@ -160,9 +207,5 @@ public class ImageViewerWindowController {
             currentImageIndex = (currentImageIndex + 1) % images.size();
             displayImage();
         }
-    }
-
-    public void handleDeleteCurrentSlideShow(ActionEvent actionEvent) {
-        
     }
 }
