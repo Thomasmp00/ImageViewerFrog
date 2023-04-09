@@ -23,6 +23,10 @@ public class ImageViewerWindowController {
 
     private boolean ImageShow = false;
 
+    List<Slideshow> listOfSlideShows = new ArrayList<>();
+
+    int slideShowCounter;
+
     @FXML
     Parent root;
 
@@ -31,6 +35,7 @@ public class ImageViewerWindowController {
 
     @FXML
     private void handleBtnLoadAction() {
+        List<Image> imagesToSlideShow = new ArrayList<>();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select image files");
         fileChooser.getExtensionFilters().add(new ExtensionFilter("Images",
@@ -40,35 +45,65 @@ public class ImageViewerWindowController {
         if (!files.isEmpty()) {
             files.forEach((File f) ->
             {
-                images.add(new Image(f.toURI().toString()));
+                imagesToSlideShow.add(new Image(f.toURI().toString()));
+                //images.add(new Image(f.toURI().toString()));
+
             });
-            displayImage();
+            Slideshow slideshow = new Slideshow(imagesToSlideShow);
+            listOfSlideShows.add(slideshow);
+            // TODO displayImage();
         }
     }
 
+    public void handleStartSlideShow(ActionEvent actionEvent){
+        if(listOfSlideShows.size() != 0){
+            slideShowCounter = listOfSlideShows.size() - 1;
 
-    @FXML
-    private void handleBtnPreviousAction() {
-        if (!images.isEmpty()) {
-            currentImageIndex =
-                    (currentImageIndex - 1 + images.size()) % images.size();
-            displayImage();
+            Thread thread = new Thread(() -> {
+                while(listOfSlideShows.size() != 0){
+
+                if(slideShowCounter == -1 ) // Makes sure the slideShow list resets by acting as a counter that resets the list
+                    slideShowCounter = listOfSlideShows.size() - 1;
+
+                // Gets and sets the correct slideShow object
+                Slideshow slideshow = listOfSlideShows.get(slideShowCounter);
+                List<Image> imagesFromSlideShow = slideshow.getImages();
+
+
+                int imageCounter = imagesFromSlideShow.size() - 1; // A counter to switch to the next slideShowImage
+
+                long slideShowTimer = System.currentTimeMillis() + 10000; // A slideShow timer for 20 seconds in milliseconds
+                while(System.currentTimeMillis() < slideShowTimer)
+                try {
+                    //Set the imageCounter
+                    if(imageCounter == -1)
+                        imageCounter = imagesFromSlideShow.size() - 1;
+
+                    Image imageToDisplay = imagesFromSlideShow.get(imageCounter);
+
+                    imageView.setImage(imageToDisplay);
+
+                    String filepath = imageView.getImage().getUrl();
+
+                    // Schedule the UI Update on the UI thread
+
+                    Platform.runLater(() -> {
+                        lblShowName.setText(filepath);
+                    });
+
+                    Thread.sleep(2000);
+
+                    imageCounter--;
+                } catch (InterruptedException e) {
+                    // Handle the exception appropriately
+                    e.printStackTrace();
+                }
+                    slideShowCounter--;
+            }});
+            thread.start();
         }
     }
 
-    @FXML
-    private void handleBtnNextAction() {
-        if (!images.isEmpty()) {
-            currentImageIndex = (currentImageIndex + 1) % images.size();
-            displayImage();
-        }
-    }
-
-    private void displayImage() {
-        if (!images.isEmpty()) {
-            imageView.setImage(images.get(currentImageIndex));
-        }
-    }
 
     public void handleSlideStartSlideShow(ActionEvent actionEvent) {
         if (ImageShow) {
@@ -102,5 +137,32 @@ public class ImageViewerWindowController {
         });
 
         thread.start();
+    }
+
+    private void displayImage() {
+        if (!images.isEmpty()) {
+            imageView.setImage(images.get(currentImageIndex));
+        }
+    }
+
+    @FXML
+    private void handleBtnPreviousAction() {
+        if (!images.isEmpty()) {
+            currentImageIndex =
+                    (currentImageIndex - 1 + images.size()) % images.size();
+            displayImage();
+        }
+    }
+
+    @FXML
+    private void handleBtnNextAction() {
+        if (!images.isEmpty()) {
+            currentImageIndex = (currentImageIndex + 1) % images.size();
+            displayImage();
+        }
+    }
+
+    public void handleDeleteCurrentSlideShow(ActionEvent actionEvent) {
+        
     }
 }
